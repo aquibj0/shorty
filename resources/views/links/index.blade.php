@@ -51,7 +51,7 @@
             border-radius: 6px;
             background: rgba(0,0,0,0.1);
         }
-        
+
         .btn-primary{
             background: linear-gradient(180deg,#00fbff,#10dce8 99.99%,#09c9e3);
             border-color: #00fbff;
@@ -60,11 +60,25 @@
             font-weight: 600;
         }
 
+        footer{
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            /* background: linear-gradient(141.39deg, #E3FFFD 17.58%, #FFEDFB 73.17%); */
+            background: linear-gradient(180deg,#00fbff,#10dce8 99.99%,#09c9e3);
+            color: #0D0543;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem
+        }
     </style>
 </head>
 <body>
     <div class="container">
 
+
+        
 
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -89,10 +103,54 @@
                     </div>
                 </div>
 
+
+                @if (session('success'))
+                    <div class="card mt-4">
+                        <div class="card-body d-flex justify-content-between align-items-center"role="alert">
+                    
+                           <div>
+                               <p class="mb-0"> {{ session('success') }}</p>
+                               <input type="text" hidden name="" id="shorten_link" value="{{ session('success') }}">
+                           </div>
+                           <div>
+                               <a href="#" onclick="copyShortenLink()">Copy</a>
+                           </div>
+                        </div>
+                    </div>
+                @endif
+
             </div>
         </div>
             
+      
     </div>
+    @if ($shorten_links_count > 0)
+    
+        <footer class="p-3">
+            <div class="text-center">
+
+                Total Shotened Links: {{$shorten_links_count}}
+
+            </div>
+        </footer>
+
+     @endif
     <script src="{{asset('js/app.js')}}"></script>
+    <script>
+        function copyShortenLink() {
+            /* Get the text field */
+            var copyText = document.getElementById("shorten_link");
+
+            /* Select the text field */
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+            /* Copy the text inside the text field */
+            navigator.clipboard.writeText(copyText.value);
+
+            /* Alert the copied text */
+            alert("Link Copied");
+        }
+    </script>
 </body>
 </html>

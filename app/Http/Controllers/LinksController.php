@@ -11,26 +11,47 @@ use App\Links;
 class LinksController extends Controller
 {
     public function index(){
-        return view('links.index');
+
+        $shorten_links_count = DB::table('links')->count();
+
+        return view('links.index', \compact('shorten_links_count'));
     }
 
 
     public function shorten(Request $request){
 
-        $random_token = Str::random(8);
+        $random_token = strtolower(Str::random(4));
 
-        DB::table('links')->insert([
-            'original_link' => $request['original_link'],
-            'short_link' => URL::to('/') . '/' . $random_token ,
-        ]);
+        $shorten_link = Links::where('original_link', $request['original_link'])->first();
 
-        return URL::to('/') . '/' . $random_token;
+        if(isset( $shorten_link)){
+            $shorten_url = $shorten_link['short_link'];
+
+            return $shorten_link;
+            return \redirect()->back()->with('success', $shorten_url) ;
+        }
+
+        else{
+
+            Links::create([
+                'original_link' => $request['original_link'],
+                'short_link' => URL::to('/') . '/' . $random_token ,
+            ]);
+
+            $shorten_url = URL::to('/') . '/' . $random_token;
+
+            return \redirect()->back()->with('success', $shorten_url) ;
+        }
+
+        
 
     }
 
 
     public function fetchLink($link){
+
         $shorten_link = URL::to('/').'/'.$link;
+        
         $link_query = DB::table('links')->where('short_link', $shorten_link);
 
         if(isset($link_query)){
